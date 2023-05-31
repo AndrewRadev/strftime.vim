@@ -8,7 +8,17 @@ set cpo&vim
 
 command! StrftimePopup call strftime#Popup()
 
-" set completefunc=strftime#Complete
+inoremap <expr> <Plug>StrftimeComplete <SID>CompleteOnce()
+
+function s:CompleteOnce()
+  let b:saved_completefunc = &completefunc
+  set completefunc=strftime#Completefunc
+
+  autocmd CompleteDone * ++once let &completefunc = b:saved_completefunc
+  autocmd CompleteDone * ++once unlet b:saved_completefunc
+
+  return "\<c-x>\<c-u>"
+endfunction
 
 let &cpo = s:keepcpo
 unlet s:keepcpo
