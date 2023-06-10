@@ -12,7 +12,7 @@ inoremap <expr> <Plug>StrftimeComplete <SID>CompleteOnce()
 
 function s:CompleteOnce()
   let b:saved_completefunc = &completefunc
-  set completefunc=strftime#Completefunc
+  set completefunc=strftime#Complete
 
   autocmd CompleteDone * ++once let &completefunc = b:saved_completefunc
   autocmd CompleteDone * ++once unlet b:saved_completefunc
