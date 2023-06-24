@@ -11,8 +11,16 @@ command! StrftimePopup call strftime#Popup()
 inoremap <expr> <Plug>StrftimeComplete <SID>CompleteOnce()
 
 function s:CompleteOnce()
+  if pumvisible()
+    return "\<c-n>"
+  endif
+
+  if &l:completefunc == 'strftime#Complete'
+    return "\<c-x>\<c-u>"
+  endif
+
   let b:saved_completefunc = &completefunc
-  set completefunc=strftime#Complete
+  setlocal completefunc=strftime#Complete
 
   autocmd CompleteDone * ++once let &completefunc = b:saved_completefunc
   autocmd CompleteDone * ++once unlet b:saved_completefunc
