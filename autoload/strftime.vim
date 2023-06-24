@@ -1,36 +1,38 @@
 " Taken from https://strftime.org/
+"
+" Note:
+"   - -> no leading zeroes
+"   _ -> blank-padded
+"   ^ -> uppercase
+"
+" Check: https://en.cppreference.com/w/cpp/chrono/c/strftime
+" Check: https://linux.die.net/man/3/strftime
+"
 let s:strftime_codes = {
-      \ '%a':  "Weekday as locale's abbreviated name.",
-      \ '%A':  "Weekday as locale's full name.",
-      \ '%w':  "Weekday as a decimal number, where 0 is Sunday and 6 is Saturday.",
-      \ '%d':  "Day of the month as a zero-padded decimal number.",
-      \ '%-d': "Day of the month as a decimal number. (Platform specific)",
-      \ '%b':  "Month as locale's abbreviated name.",
-      \ '%B':  "Month as locale's full name.",
-      \ '%m':  "Month as a zero-padded decimal number.",
-      \ '%-m': "Month as a decimal number. (Platform specific)",
-      \ '%y':  "Year without century as a zero-padded decimal number.",
-      \ '%Y':  "Year with century as a decimal number.",
-      \ '%H':  "Hour (24-hour clock) as a zero-padded decimal number.",
-      \ '%-H': "Hour (24-hour clock) as a decimal number. (Platform specific)",
-      \ '%I':  "Hour (12-hour clock) as a zero-padded decimal number.",
-      \ '%-I': "Hour (12-hour clock) as a decimal number. (Platform specific)",
-      \ '%p':  "Locale's equivalent of either AM or PM.",
-      \ '%M':  "Minute as a zero-padded decimal number.",
-      \ '%-M': "Minute as a decimal number. (Platform specific)",
-      \ '%S':  "Second as a zero-padded decimal number.",
-      \ '%-S': "Second as a decimal number. (Platform specific)",
-      \ '%f':  "Microsecond as a decimal number, zero-padded on the left.",
-      \ '%z':  "UTC offset in the form ±HHMM[SS[.ffffff]] (empty string if the object is naive).",
-      \ '%Z':  "Time zone name (empty string if the object is naive).",
-      \ '%j':  "Day of the year as a zero-padded decimal number.",
-      \ '%-j': "Day of the year as a decimal number. (Platform specific)",
-      \ '%U':  "Week number of the year (Sunday as the first day of the week) as a zero padded decimal number.",
-      \ '%W':  "Week number of the year (Monday as the first day of the week) as a decimal number.",
-      \ '%c':  "Locale's appropriate date and time representation.",
-      \ '%x':  "Locale's appropriate date representation.",
-      \ '%X':  "Locale's appropriate time representation.",
-      \ '%%':  "A literal '%' character.",
+      \ '%a': "Weekday as locale's abbreviated name.",
+      \ '%A': "Weekday as locale's full name.",
+      \ '%w': "Weekday as a decimal number, where 0 is Sunday and 6 is Saturday.",
+      \ '%d': "Day of the month as a zero-padded decimal number.",
+      \ '%b': "Month as locale's abbreviated name.",
+      \ '%B': "Month as locale's full name.",
+      \ '%m': "Month as a zero-padded decimal number.",
+      \ '%y': "Year without century as a zero-padded decimal number.",
+      \ '%Y': "Year with century as a decimal number.",
+      \ '%H': "Hour (24-hour clock) as a zero-padded decimal number.",
+      \ '%I': "Hour (12-hour clock) as a zero-padded decimal number.",
+      \ '%p': "Locale's equivalent of either AM or PM.",
+      \ '%M': "Minute as a zero-padded decimal number.",
+      \ '%S': "Second as a zero-padded decimal number.",
+      \ '%f': "Microsecond as a decimal number, zero-padded on the left.",
+      \ '%z': "UTC offset in the form ±HHMM[SS[.ffffff]] (empty string if the object is naive).",
+      \ '%Z': "Time zone name (empty string if the object is naive).",
+      \ '%j': "Day of the year as a zero-padded decimal number.",
+      \ '%U': "Week number of the year (Sunday as the first day of the week) as a zero padded decimal number.",
+      \ '%W': "Week number of the year (Monday as the first day of the week) as a decimal number.",
+      \ '%c': "Locale's appropriate date and time representation.",
+      \ '%x': "Locale's appropriate date representation.",
+      \ '%X': "Locale's appropriate time representation.",
+      \ '%%': "A literal '%' character.",
       \ }
 let s:popup_window = -1
 
