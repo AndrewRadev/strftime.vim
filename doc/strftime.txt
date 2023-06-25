@@ -47,6 +47,18 @@ USAGE                                                           *strftime-usage*
 
 TODO
 
+Taken from:
+
+- https://strftime.org/
+- https://linux.die.net/man/3/strftime
+
+Note:
+  -    -> no leading zeroes
+  _    -> blank-padded
+  ^    -> uppercase
+  E, O -> alternative format (unused)
+
+
 
 ==============================================================================
 SETTINGS                                                     *strftime-settings*

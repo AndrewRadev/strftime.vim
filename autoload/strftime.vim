@@ -1,14 +1,3 @@
-" Taken from https://strftime.org/
-"
-" Note:
-"   -    -> no leading zeroes
-"   _    -> blank-padded
-"   ^    -> uppercase
-"   E, O -> alternative format
-"
-" Check: https://en.cppreference.com/w/cpp/chrono/c/strftime
-" Check: https://linux.die.net/man/3/strftime
-"
 let s:strftime_codes = {
       \ '%%': "A literal '%' character",
       \ '%A': "Weekday as locale's full name",
@@ -52,19 +41,31 @@ let s:popup_window = -1
 function! strftime#Complete(findstart, base)
   if a:findstart
     " locate the start of the timestamp
-    let [_, start_col] = searchpos('%\%(\w\|\s\)*', 'bWn', line('.'))
+    let [_, start_col] = searchpos('%[-_^]\=\%(\w\|\s\)*', 'bWn', line('.'))
     if start_col <= 1
       return -3 " cancel completion
     else
       return start_col - 1
     endif
   else
-    let input = substitute(a:base, '^%', '', '')
+    let prefix = matchstr(a:base, '^%\zs[-_^]')
+    let input = substitute(a:base, '^%[-_^]\=', '', '')
     let results = []
 
     for [code, description] in items(s:strftime_codes)
-      if input == '' || len(matchfuzzy([description], input)) > 0
+      if input == '' || len(matchfuzzy([description], input, { 'matchseq': 1 })) > 0
+        if prefix == '-'
+          let code = substitute(code, '^%', '%-', '')
+          let description = substitute(description, ' zero-padded ', ' ', 'g')
+        elseif prefix == '_'
+          let code = substitute(code, '^%', '%_', '')
+          let description = substitute(description, ' zero-padded ', ' blank-padded ', 'g')
+        elseif prefix == '^'
+          let code = substitute(code, '^%', '%^', '')
+        endif
+
         let description ..= ' (' .. strftime(code) .. ')'
+
         call add(results, { 'word': code, 'menu': description })
       endif
     endfor
@@ -73,7 +74,7 @@ function! strftime#Complete(findstart, base)
   endif
 endfunction
 
-function! strftime#Popup()
+function! strftime#Popup() abort
   " find the start of a string on the line
   let [_, start_col] = searchpos('[''"]', 'bWcn', line('.'))
   if start_col <= 0
@@ -81,13 +82,18 @@ function! strftime#Popup()
   endif
 
   let line = getline('.')
+  let quote = line[start_col - 1]
 
-  if line[start_col - 1] == "'"
+  if quote == "'"
     let string_contents = s:GetMotion("vi'")
-  elseif line[start_col - 1] == '"'
+  elseif quote == '"'
     let string_contents = s:GetMotion('vi"')
   else
     return
+  endif
+
+  if string_contents == ''
+    let string_contents = s:GetMotion('T'.quote.'vg_')
   endif
 
   let popup_lines = []
@@ -114,7 +120,7 @@ function! strftime#Popup()
   endif
 endfunction
 
-function! s:GetMotion(motion)
+function! s:GetMotion(motion) abort
   let saved_view = winsaveview()
 
   let saved_selection = &selection
