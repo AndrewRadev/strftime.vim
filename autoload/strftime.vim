@@ -54,8 +54,7 @@ function! strftime#Complete(findstart, base)
       return start_col - 1
     endif
   else
-    let prefix = matchstr(a:base, '^%\zs[-_^]')
-    let input = substitute(a:base, '^%[-_^]\=', '', '')
+    let [prefix, input] = s:ExtractPrefix(a:base)
     let results = []
 
     if input == ''
@@ -65,19 +64,7 @@ function! strftime#Complete(findstart, base)
     endif
 
     for entry in matches
-      let code = entry.code
-      let description = entry.description
-
-      if prefix == '-'
-        let code = substitute(code, '^%', '%-', '')
-        let description = substitute(description, ' zero-padded ', ' ', 'g')
-      elseif prefix == '_'
-        let code = substitute(code, '^%', '%_', '')
-        let description = substitute(description, ' zero-padded ', ' blank-padded ', 'g')
-      elseif prefix == '^'
-        let code = substitute(code, '^%', '%^', '')
-      endif
-
+      let [code, description] = s:ApplyPrefix(prefix, entry.code, entry.description)
       let description ..= ' (' .. strftime(code) .. ')'
 
       call add(results, { 'word': code, 'menu': description })
@@ -111,16 +98,19 @@ function! strftime#Popup() abort
 
   let popup_lines = []
   let [special_symbol, _, end_index]  = matchstrpos(string_contents, '^%\(%\|[-_^]\=\w\)')
+  let [prefix, code] = s:ExtractPrefix(special_symbol)
 
   while special_symbol != ''
-    if has_key(s:by_code, special_symbol)
-      call add(popup_lines, special_symbol .. "\t" .. s:by_code[special_symbol])
+    if has_key(s:by_code, '%'.code)
+      let [code, description] = s:ApplyPrefix(prefix, '%'.code, s:by_code['%'.code])
+      call add(popup_lines, code .. "\t" .. description)
     else
       call add(popup_lines, special_symbol .. "\t" .. "[Unknown]")
     endif
 
     let [special_symbol, _, end_index] =
           \ matchstrpos(string_contents, '^%\(%\|[-_^]\=\w\)', end_index + 1)
+    let [prefix, code] = s:ExtractPrefix(special_symbol)
   endwhile
 
   if len(popup_lines) > 0
@@ -131,6 +121,31 @@ function! strftime#Popup() abort
     let popup_lines = extend([strftime(string_contents), ''], popup_lines)
     let s:popup_window = popup_atcursor(popup_lines, { 'border': [] })
   endif
+endfunction
+
+function s:ExtractPrefix(base) abort
+  let prefix = matchstr(a:base, '^%\zs[-_^]')
+  let input = substitute(a:base, '^%[-_^]\=', '', '')
+
+  return [prefix, input]
+endfunction
+
+function! s:ApplyPrefix(prefix, code, description) abort
+  let prefix      = a:prefix
+  let code        = a:code
+  let description = a:description
+
+  if prefix == '-'
+    let code        = substitute(code, '^%', '%-', '')
+    let description = substitute(description, ' zero-padded ', ' ', 'g')
+  elseif prefix == '_'
+    let code        = substitute(code, '^%', '%_', '')
+    let description = substitute(description, ' zero-padded ', ' blank-padded ', 'g')
+  elseif prefix == '^'
+    let code = substitute(code, '^%', '%^', '')
+  endif
+
+  return [code, description]
 endfunction
 
 function! s:GetMotion(motion) abort
