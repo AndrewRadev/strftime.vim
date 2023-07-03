@@ -50,12 +50,16 @@ Preview popup ~
 If you have a strftime-formatted string in any language, like:
 >
     echo strftime('%H:%M:%S')
-    puts Date.strftime("%x")
+    puts DateTime.now.strftime("%x")
 <
 You can place the cursor over the string and execute the command
 |:StrftimePopup|. This will open a popup that renders the strftime string
 applied on the current time and lists all the special characters used with
 descriptions.
+
+Note that the string must be inside a single- or double-quoted string, so the
+plugin knows where to find the start and end (though the string doesn't need
+to be closed).
 
 Completion function ~
                                                         *<Plug>StrftimeComplete*
@@ -77,14 +81,16 @@ starts with `%`, and you can write whatever you like, it'll be fuzzy-matched
 with all the known descriptions. For instance, you might write the following
 and trigger completion at the end of the line:
 >
-    echo strftime("%full time
+    echo strftime('%full time
 <
 Triggering this locally, I get the following:
 >
     %Y Full year (with century) as a decimal number (2023)
     %G ISO 8601 week-based full year (with century) as a decimal number (2023)
 <
-When a completion is picked, the code ("%Y" or "%G") will replace "%full time".
+When a completion is picked, the code ("%Y" or "%G") will replace "%full
+time". You can also just type `%` and trigger completion to get a list of all
+the entries to go through.
 
 Modifiers ~
 

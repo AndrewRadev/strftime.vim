@@ -97,7 +97,7 @@ function! strftime#Popup() abort
   endif
 
   let popup_lines = []
-  let [special_symbol, _, end_index]  = matchstrpos(string_contents, '^%\(%\|[-_^]\=\w\)')
+  let [special_symbol, _, end_index]  = matchstrpos(string_contents, '%\(%\|[-_^]\=\w\)')
   let [prefix, code] = s:ExtractPrefix(special_symbol)
 
   while special_symbol != ''
@@ -109,7 +109,7 @@ function! strftime#Popup() abort
     endif
 
     let [special_symbol, _, end_index] =
-          \ matchstrpos(string_contents, '^%\(%\|[-_^]\=\w\)', end_index + 1)
+          \ matchstrpos(string_contents, '%\(%\|[-_^]\=\w\)', end_index + 1)
     let [prefix, code] = s:ExtractPrefix(special_symbol)
   endwhile
 
