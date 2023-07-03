@@ -15,6 +15,8 @@ You can place the cursor over the string and execute the command `:StrftimePopup
 
 Note that the string must be inside a single- or double-quoted string, so the plugin knows where to find the start and end (though the string doesn't need to be closed).
 
+The popup uses Vim's `popup_create` function, so it won't work on Neovim or on an older Vim version. I'd be open to a PR that implements a Neovim variant.
+
 ### Completion function
 
 To make it easier to write the strings, the plugin exposes a completion function that you could plug into `completefunc` or `omnifunc`. Since it's such a specific tool, it's recommended to use a custom mapping that sets `completefunc` temporarily. It's provided as `<Plug>StrftimeComplete` and you could map it to whatever is convenient like this:

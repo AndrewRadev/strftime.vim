@@ -75,6 +75,11 @@ function! strftime#Complete(findstart, base)
 endfunction
 
 function! strftime#Popup() abort
+  if !exists('*popup_create')
+    echoerr "This version of Vim doesn't support popups"
+    return
+  endif
+
   " find the start of a string on the line
   let [_, start_col] = searchpos('[''"]', 'bWcn', line('.'))
   if start_col <= 0

@@ -61,6 +61,9 @@ Note that the string must be inside a single- or double-quoted string, so the
 plugin knows where to find the start and end (though the string doesn't need
 to be closed).
 
+The popup uses Vim's |popup_create| function, so it won't work on Neovim or on
+an older Vim version. I'd be open to a PR that implements a Neovim variant.
+
 Completion function ~
                                                         *<Plug>StrftimeComplete*
 
