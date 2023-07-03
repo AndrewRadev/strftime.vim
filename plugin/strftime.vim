@@ -6,9 +6,8 @@ let g:loaded_strftime = '0.0.1' " version number
 let s:keepcpo = &cpo
 set cpo&vim
 
-command! StrftimePopup call strftime#Popup()
-
 inoremap <expr> <Plug>StrftimeComplete <SID>CompleteOnce()
+command! StrftimePopup call strftime#Popup()
 
 function s:CompleteOnce()
   if pumvisible()
