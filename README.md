@@ -1,5 +1,3 @@
-This is a temporary name until I come up with something catchier. Demo gif:
-
 ![Demo](http://i.andrewradev.com/16c7b7ef3f031844391043080b0fe1a5.gif)
 
 ## Usage
