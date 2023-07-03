@@ -1,41 +1,47 @@
-let s:strftime_codes = {
-      \ '%%': "A literal '%' character",
-      \ '%A': "Weekday as locale's full name",
-      \ '%B': "Month as locale's full name",
-      \ '%C': "Century number (year/100) as a 2-digit number",
-      \ '%D': "Full date in US style, equivalent to %m/%d/%y",
-      \ '%F': "Full date in ISO 8601 style, equivalent to %Y-%m-%d",
-      \ '%G': "ISO 8601 week-based full year (with century) as a decimal number",
-      \ '%H': "Hour, 24-hour clock",
-      \ '%I': "Hour, 12-hour clock",
-      \ '%M': "Minute as a zero-padded decimal number",
-      \ '%P': "Locale's equivalent of either am or pm",
-      \ '%R': "Time, 24-hour clock, equivalent to %H:%M",
-      \ '%S': "Second as a zero-padded decimal number",
-      \ '%T': "Time with seconds, 24-hour clock, equivalent to %H:%M:%S",
-      \ '%U': "Week number of the year (Sunday as the start of the week)",
-      \ '%V': "ISO 8601 week number",
-      \ '%W': "Week number of the year (Monday as the start of the week)",
-      \ '%X': "Locale's appropriate time representation",
-      \ '%Y': "Full year (with century) as a decimal number",
-      \ '%Z': "Time zone name",
-      \ '%a': "Weekday as locale's abbreviated name",
-      \ '%b': "Month as locale's abbreviated name",
-      \ '%c': "Locale's appropriate date and time representation",
-      \ '%d': "Day of the month as a zero-padded decimal number",
-      \ '%f': "Microsecond as a decimal number",
-      \ '%g': "ISO 8601 week-based year without century",
-      \ '%j': "Day of the year as a zero-padded decimal number",
-      \ '%m': "Month as a zero-padded decimal number",
-      \ '%p': "Locale's equivalent of either AM or PM",
-      \ '%r': "Time with seconds and AM/PM, equivalent to %I:%M:%S %p",
-      \ '%s': "Unix timestamp, the number of seconds since the Epoch",
-      \ '%u': "Weekday as a decimal number, where 1 is Monday and 7 is Sunday",
-      \ '%w': "Weekday as a decimal number, where 0 is Sunday and 6 is Saturday",
-      \ '%x': "Locale's appropriate date representation",
-      \ '%y': "Year without century as a zero-padded decimal number",
-      \ '%z': "UTC offset in the form ±HHMM[SS[.ffffff]]",
-      \ }
+let s:entries = [
+      \ { 'code': '%%', 'description': "A literal '%' character" },
+      \ { 'code': '%A', 'description': "Weekday as locale's full name" },
+      \ { 'code': '%B', 'description': "Month as locale's full name" },
+      \ { 'code': '%C', 'description': "Century number (year/100) as a 2-digit number" },
+      \ { 'code': '%D', 'description': "Full date in US style, equivalent to %m/%d/%y" },
+      \ { 'code': '%F', 'description': "Full date in ISO 8601 style, equivalent to %Y-%m-%d" },
+      \ { 'code': '%G', 'description': "ISO 8601 week-based full year (with century) as a decimal number" },
+      \ { 'code': '%H', 'description': "Hour, 24-hour clock" },
+      \ { 'code': '%I', 'description': "Hour, 12-hour clock" },
+      \ { 'code': '%M', 'description': "Minute as a zero-padded decimal number" },
+      \ { 'code': '%P', 'description': "Locale's equivalent of either am or pm" },
+      \ { 'code': '%R', 'description': "Time, 24-hour clock, equivalent to %H:%M" },
+      \ { 'code': '%S', 'description': "Second as a zero-padded decimal number" },
+      \ { 'code': '%T', 'description': "Time with seconds, 24-hour clock, equivalent to %H:%M:%S" },
+      \ { 'code': '%U', 'description': "Week number of the year (Sunday as the start of the week)" },
+      \ { 'code': '%V', 'description': "ISO 8601 week number" },
+      \ { 'code': '%W', 'description': "Week number of the year (Monday as the start of the week)" },
+      \ { 'code': '%X', 'description': "Locale's appropriate time representation" },
+      \ { 'code': '%Y', 'description': "Full year (with century) as a decimal number" },
+      \ { 'code': '%Z', 'description': "Time zone name" },
+      \ { 'code': '%a', 'description': "Weekday as locale's abbreviated name" },
+      \ { 'code': '%b', 'description': "Month as locale's abbreviated name" },
+      \ { 'code': '%c', 'description': "Locale's appropriate date and time representation" },
+      \ { 'code': '%d', 'description': "Day of the month as a zero-padded decimal number" },
+      \ { 'code': '%f', 'description': "Microsecond as a decimal number" },
+      \ { 'code': '%g', 'description': "ISO 8601 week-based year without century" },
+      \ { 'code': '%j', 'description': "Day of the year as a zero-padded decimal number" },
+      \ { 'code': '%m', 'description': "Month as a zero-padded decimal number" },
+      \ { 'code': '%p', 'description': "Locale's equivalent of either AM or PM" },
+      \ { 'code': '%r', 'description': "Time with seconds and AM/PM, equivalent to %I:%M:%S %p" },
+      \ { 'code': '%s', 'description': "Unix timestamp, the number of seconds since the Epoch" },
+      \ { 'code': '%u', 'description': "Weekday as a decimal number, where 1 is Monday and 7 is Sunday" },
+      \ { 'code': '%w', 'description': "Weekday as a decimal number, where 0 is Sunday and 6 is Saturday" },
+      \ { 'code': '%x', 'description': "Locale's appropriate date representation" },
+      \ { 'code': '%y', 'description': "Year without century as a zero-padded decimal number" },
+      \ { 'code': '%z', 'description': "UTC offset in the form ±HHMM[SS[.ffffff]]" },
+      \ ]
+
+let s:by_code = {}
+for entry in s:entries
+  let s:by_code[entry.code] = entry.description
+endfor
+
 let s:popup_window = -1
 
 function! strftime#Complete(findstart, base)
@@ -52,25 +58,32 @@ function! strftime#Complete(findstart, base)
     let input = substitute(a:base, '^%[-_^]\=', '', '')
     let results = []
 
-    for [code, description] in items(s:strftime_codes)
-      if input == '' || len(matchfuzzy([description], input, { 'matchseq': 1 })) > 0
-        if prefix == '-'
-          let code = substitute(code, '^%', '%-', '')
-          let description = substitute(description, ' zero-padded ', ' ', 'g')
-        elseif prefix == '_'
-          let code = substitute(code, '^%', '%_', '')
-          let description = substitute(description, ' zero-padded ', ' blank-padded ', 'g')
-        elseif prefix == '^'
-          let code = substitute(code, '^%', '%^', '')
-        endif
+    if input == ''
+      let matches = sort(s:entries, function('s:CompareCodes'))
+    else
+      let matches = matchfuzzy(s:entries, input, { 'key': 'description' })
+    endif
 
-        let description ..= ' (' .. strftime(code) .. ')'
+    for entry in matches
+      let code = entry.code
+      let description = entry.description
 
-        call add(results, { 'word': code, 'menu': description })
+      if prefix == '-'
+        let code = substitute(code, '^%', '%-', '')
+        let description = substitute(description, ' zero-padded ', ' ', 'g')
+      elseif prefix == '_'
+        let code = substitute(code, '^%', '%_', '')
+        let description = substitute(description, ' zero-padded ', ' blank-padded ', 'g')
+      elseif prefix == '^'
+        let code = substitute(code, '^%', '%^', '')
       endif
+
+      let description ..= ' (' .. strftime(code) .. ')'
+
+      call add(results, { 'word': code, 'menu': description })
     endfor
 
-    return sort(results, function('s:CompareWords'))
+    return results
   endif
 endfunction
 
@@ -97,17 +110,17 @@ function! strftime#Popup() abort
   endif
 
   let popup_lines = []
-  let [special_symbol, _, end_index]  = matchstrpos(string_contents, '^%\(%\|-\?\w\)')
+  let [special_symbol, _, end_index]  = matchstrpos(string_contents, '^%\(%\|[-_^]\=\w\)')
 
   while special_symbol != ''
-    if has_key(s:strftime_codes, special_symbol)
-      call add(popup_lines, special_symbol .. "\t" .. s:strftime_codes[special_symbol])
+    if has_key(s:by_code, special_symbol)
+      call add(popup_lines, special_symbol .. "\t" .. s:by_code[special_symbol])
     else
       call add(popup_lines, special_symbol .. "\t" .. "[Unknown]")
     endif
 
     let [special_symbol, _, end_index] =
-          \ matchstrpos(string_contents, '^%\(%\|-\?\w\)', end_index + 1)
+          \ matchstrpos(string_contents, '^%\(%\|[-_^]\=\w\)', end_index + 1)
   endwhile
 
   if len(popup_lines) > 0
@@ -149,13 +162,13 @@ function! s:GetMotion(motion) abort
   return text
 endfunction
 
-function! s:CompareWords(left, right) abort
-  let left_word = a:left.word
-  let right_word = a:right.word
+function! s:CompareCodes(left, right) abort
+  let left_code = a:left.code
+  let right_code = a:right.code
 
-  if left_word ==# right_word
+  if left_code ==# right_code
     return 0
-  elseif left_word ># right_word
+  elseif left_code ># right_code
     return 1
   else
     return -1
