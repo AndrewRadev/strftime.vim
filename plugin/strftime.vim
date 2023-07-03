@@ -2,7 +2,7 @@ if exists('g:loaded_strftime') || &cp
   finish
 endif
 
-let g:loaded_strftime = '0.0.1' " version number
+let g:loaded_strftime = '0.1.0' " version number
 let s:keepcpo = &cpo
 set cpo&vim
 
